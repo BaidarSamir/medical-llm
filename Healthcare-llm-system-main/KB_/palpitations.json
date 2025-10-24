@@ -1,0 +1,32 @@
+{
+  "symptom": "palpitations",
+  "aliases": [
+    "racing heart",
+    "fluttering in chest",
+    "heart skipping beats",
+    "pounding heart",
+    "fast heartbeat",
+    "heart is flipping",
+    "irregular heartbeat",
+    "thudding heart",
+    "heart beating fast for no reason"
+  ],
+  "department": "Cardiology",
+  "reason": "Palpitations indicate irregular or rapid heartbeat, possibly from stress or heart conditions.",
+  "causes": [
+    "Arrhythmia",
+    "Stress or anxiety",
+    "Overexertion",
+    "Heart valve problems"
+  ],
+  "consequences": [
+    "Fainting",
+    "Heart failure",
+    "Stroke (if untreated arrhythmia)"
+  ],
+  "suggestions": [
+    "Monitor pulse",
+    "Avoid stimulants",
+    "Get ECG or Holter test"
+  ]
+}

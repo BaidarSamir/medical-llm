@@ -1,0 +1,32 @@
+{
+  "symptom": "cough",
+  "aliases": [
+    "dry cough",
+    "wet cough",
+    "mucus cough",
+    "hacking cough",
+    "can't stop coughing",
+    "tickle in throat",
+    "persistent cough",
+    "rough throat",
+    "coughing fits"
+  ],
+  "department": "General Medicine",
+  "reason": "Coughing helps clear the throat and lungs but may indicate infection.",
+  "causes": [
+    "Common cold",
+    "Bronchitis",
+    "Allergies",
+    "Throat infection"
+  ],
+  "consequences": [
+    "Throat irritation",
+    "Fatigue",
+    "Respiratory infection"
+  ],
+  "suggestions": [
+    "Warm fluids",
+    "Avoid cold air",
+    "Consult physician if >1 week"
+  ]
+}

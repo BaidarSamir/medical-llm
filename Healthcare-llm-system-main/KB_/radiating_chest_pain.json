@@ -1,0 +1,28 @@
+{
+  "symptom": "radiating chest pain",
+  "aliases": [
+    "pain in left arm",
+    "jaw pain with chest discomfort",
+    "back pain during chest pain",
+    "chest pain moving to shoulder",
+    "chest pain spreading",
+    "pain in chest and jaw"
+  ],
+  "department": "Cardiology",
+  "reason": "Pain radiating to jaw or arm can be a classic sign of a heart attack.",
+  "causes": [
+    "Blocked coronary arteries",
+    "Angina",
+    "Heart attack"
+  ],
+  "consequences": [
+    "Severe cardiac event",
+    "Sudden collapse",
+    "Organ damage"
+  ],
+  "suggestions": [
+    "Seek emergency help",
+    "Do not ignore pain",
+    "Consult a cardiologist"
+  ]
+}

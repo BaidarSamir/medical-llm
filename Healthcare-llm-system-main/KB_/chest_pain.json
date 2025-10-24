@@ -1,0 +1,35 @@
+{
+  "symptom": "chest pain",
+  "aliases": [
+    "tightness in chest",
+    "pressure in chest",
+    "chest discomfort",
+    "heavy chest",
+    "burning chest",
+    "squeezing chest",
+    "pain in chest area",
+    "chest heaviness",
+    "crushing chest pain",
+    "discomfort in chest",
+    "sharp chest pain",
+    "pain near heart"
+  ],
+  "department": "Cardiology",
+  "reason": "Chest pain can be a sign that the heart is not getting enough oxygen.",
+  "causes": [
+    "Blocked arteries",
+    "Angina",
+    "Heart attack",
+    "High blood pressure"
+  ],
+  "consequences": [
+    "Heart attack",
+    "Heart failure",
+    "Damage to heart muscles"
+  ],
+  "suggestions": [
+    "Get ECG immediately",
+    "Consult a cardiologist",
+    "Avoid physical exertion"
+  ]
+}

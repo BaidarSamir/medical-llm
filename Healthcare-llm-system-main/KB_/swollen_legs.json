@@ -1,0 +1,31 @@
+{
+  "symptom": "swollen legs",
+  "aliases": [
+    "puffy feet",
+    "ankle swelling",
+    "fluid retention",
+    "legs feel heavy",
+    "water buildup in legs",
+    "leg puffiness",
+    "foot swelling",
+    "tight shoes from swelling"
+  ],
+  "department": "Cardiology",
+  "reason": "Swelling can happen when the heart fails to circulate blood efficiently, causing fluid buildup.",
+  "causes": [
+    "Heart failure",
+    "High BP",
+    "Poor circulation",
+    "Kidney overload"
+  ],
+  "consequences": [
+    "Discomfort walking",
+    "Leg ulcers",
+    "Heart stress"
+  ],
+  "suggestions": [
+    "Elevate feet",
+    "Limit salt",
+    "Consult cardiologist"
+  ]
+}

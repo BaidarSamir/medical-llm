@@ -1,0 +1,33 @@
+{
+  "symptom": "fever",
+  "aliases": [
+    "high temperature",
+    "feverish",
+    "hot body",
+    "chills and sweating",
+    "temperature above normal",
+    "burning body",
+    "body heat",
+    "feeling hot",
+    "sweating a lot",
+    "low-grade fever",
+    "mild fever"
+  ],
+  "department": "General Medicine",
+  "reason": "Fever is the body's response to infection or inflammation.",
+  "causes": [
+    "Viral infection",
+    "Bacterial infection",
+    "Flu or cold"
+  ],
+  "consequences": [
+    "Body weakness",
+    "Dehydration",
+    "Fainting (high fever)"
+  ],
+  "suggestions": [
+    "Drink fluids",
+    "Take fever-reducing medicine",
+    "Consult doctor if persistent"
+  ]
+}

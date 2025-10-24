@@ -1,0 +1,29 @@
+# Core dependencies for Medical Symptom Analysis LLM Pipeline
+
+# FastAPI and web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database and vector operations
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+
+# AI and ML libraries
+sentence-transformers==2.2.2
+numpy==1.24.3
+tensorflow==2.15.0
+keras-nlp==0.6.3
+
+# HTTP requests
+requests==2.31.0
+
+# Data processing
+pandas==2.1.4
+
+# Logging and utilities
+python-multipart==0.0.6
+pydantic==2.5.0
+
+# Development and testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1

@@ -1,0 +1,31 @@
+{
+  "symptom": "dizziness",
+  "aliases": [
+    "lightheadedness",
+    "faint feeling",
+    "blackout sensation",
+    "sudden imbalance",
+    "feeling like fainting",
+    "room spinning",
+    "woozy",
+    "dizzy spells",
+    "nearly passed out"
+  ],
+  "department": "Cardiology",
+  "reason": "Dizziness may occur if the brain gets insufficient blood due to weak heart function.",
+  "causes": [
+    "Low blood pressure",
+    "Arrhythmia",
+    "Heart valve disorders"
+  ],
+  "consequences": [
+    "Injury from falls",
+    "Loss of consciousness",
+    "Sudden cardiac event"
+  ],
+  "suggestions": [
+    "Sit or lie down",
+    "Check blood pressure",
+    "Consult a cardiologist"
+  ]
+}

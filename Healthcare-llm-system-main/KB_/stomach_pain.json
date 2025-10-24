@@ -1,0 +1,32 @@
+{
+  "symptom": "stomach pain",
+  "aliases": [
+    "abdominal pain",
+    "cramps",
+    "belly ache",
+    "tummy pain",
+    "burning stomach",
+    "gastric pain",
+    "pain in stomach",
+    "stomach cramps",
+    "ache in lower abdomen"
+  ],
+  "department": "General Medicine",
+  "reason": "Stomach pain can come from digestion issues or infections.",
+  "causes": [
+    "Gastritis",
+    "Food poisoning",
+    "Indigestion",
+    "Gas"
+  ],
+  "consequences": [
+    "Vomiting",
+    "Dehydration",
+    "Intestinal issues"
+  ],
+  "suggestions": [
+    "Avoid oily foods",
+    "Drink ORS",
+    "Consult doctor if severe"
+  ]
+}

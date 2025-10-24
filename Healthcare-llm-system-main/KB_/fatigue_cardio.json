@@ -1,0 +1,30 @@
+{
+  "symptom": "fatigue_cardio",
+  "aliases": [
+    "tired all the time",
+    "can’t get energy",
+    "feeling drained",
+    "body feels heavy",
+    "exhausted with little activity",
+    "lack of stamina",
+    "daily tiredness",
+    "burnt out"
+  ],
+  "department": "Cardiology",
+  "reason": "When the heart can't pump enough blood, the body doesn't get enough oxygen — causing fatigue.",
+  "causes": [
+    "Heart failure",
+    "Blocked arteries",
+    "Post-heart attack fatigue"
+  ],
+  "consequences": [
+    "Reduced productivity",
+    "Depression",
+    "Worsening of heart condition"
+  ],
+  "suggestions": [
+    "Avoid overexertion",
+    "Eat heart-healthy foods",
+    "Get cardiac checkup"
+  ]
+}

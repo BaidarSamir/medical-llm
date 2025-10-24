@@ -1,0 +1,32 @@
+{
+  "symptom": "fatigue",
+  "aliases": [
+    "extreme tiredness",
+    "low energy",
+    "burned out",
+    "exhausted",
+    "no stamina",
+    "feeling sleepy all day",
+    "lack of energy",
+    "drained",
+    "worn out"
+  ],
+  "department": "General Medicine",
+  "reason": "Fatigue can result from lack of sleep, poor nutrition, or underlying conditions.",
+  "causes": [
+    "Anemia",
+    "Infections",
+    "Nutritional deficiency",
+    "Thyroid issues"
+  ],
+  "consequences": [
+    "Weakness",
+    "Sleep disturbance",
+    "Decreased productivity"
+  ],
+  "suggestions": [
+    "Regular sleep",
+    "Healthy meals",
+    "Consult doctor if prolonged"
+  ]
+}

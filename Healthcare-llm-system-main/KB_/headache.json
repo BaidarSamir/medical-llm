@@ -1,0 +1,33 @@
+{
+  "symptom": "headache",
+  "aliases": [
+    "pulsating head",
+    "throbbing pain",
+    "migraine",
+    "head pressure",
+    "temple pain",
+    "pounding head",
+    "head feels tight",
+    "heavy head",
+    "pain in forehead",
+    "constant head pain"
+  ],
+  "department": "General Medicine",
+  "reason": "Headaches can occur due to tension, stress, dehydration, or neurological issues.",
+  "causes": [
+    "Tension headache",
+    "Migraine",
+    "Dehydration",
+    "Lack of sleep"
+  ],
+  "consequences": [
+    "Inability to focus",
+    "Mood swings",
+    "Nausea"
+  ],
+  "suggestions": [
+    "Stay hydrated",
+    "Rest in a quiet room",
+    "Consult physician if frequent"
+  ]
+}

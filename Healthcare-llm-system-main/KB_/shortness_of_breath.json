@@ -1,0 +1,34 @@
+{
+  "symptom": "shortness of breath",
+  "aliases": [
+    "difficulty breathing",
+    "can\u2019t breathe properly",
+    "gasping for air",
+    "tight breathing",
+    "heavy breathing",
+    "breathlessness",
+    "short breath",
+    "struggling to breathe",
+    "out of breath easily",
+    "trouble catching breath",
+    "winded feeling"
+  ],
+  "department": "Cardiology",
+  "reason": "Breathlessness can occur if the heart is unable to pump blood effectively.",
+  "causes": [
+    "Heart failure",
+    "Fluid in lungs",
+    "High BP",
+    "Angina"
+  ],
+  "consequences": [
+    "Severe fatigue",
+    "Lung damage",
+    "Increased heart strain"
+  ],
+  "suggestions": [
+    "Rest immediately",
+    "Consult cardiologist",
+    "Chest X-ray or ECG suggested"
+  ]
+}
