@@ -116,3 +116,10 @@ This project is for educational purposes and should not be used as a substitute 
 - Frontend: `Healthcare-llm-system-main/webui/`
 
 — Built to be practical, private, and understandable.
+
+## Screenshot
+
+Below is a sample of the UI while analyzing symptoms.
+
+![Medical Symptom Analyzer UI](docs/Example.png)
+

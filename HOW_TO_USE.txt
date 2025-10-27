@@ -1,0 +1,21 @@
+How to use (Windows PowerShell)
+
+1) Activate Python env
+   cd Healthcare-llm-system-main
+   .\venv\Scripts\Activate.ps1
+
+2) First time only (install deps and load KB)
+   pip install -r requirements.txt
+   python init_knowledge_base.py
+
+3) Start the backend API (port 9001)
+   python simple_api.py
+   Open http://127.0.0.1:9001/docs for the API UI
+
+4) Optional: start the web UI (frontend)
+   cd webui
+   npm install
+   npm run dev
+   Open http://localhost:5173
+
+Tip: If you get import squiggles in VS Code, we already set the interpreter to this venv in .vscode/settings.json.
