@@ -121,5 +121,5 @@ This project is for educational purposes and should not be used as a substitute 
 
 Below is a sample of the UI while analyzing symptoms.
 
-![Medical Symptom Analyzer UI](docs/Example.png)
+![Medical Symptom Analyzer UI](Example.png)
 
