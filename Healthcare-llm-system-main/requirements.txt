@@ -1,29 +1,197 @@
-# Core dependencies for Medical Symptom Analysis LLM Pipeline
+# Medical Symptom Analyzer - Python Requirements# Core dependencies for Medical Symptom Analysis LLM Pipeline
 
-# FastAPI and web framework
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+# 
 
-# Database and vector operations
-psycopg2-binary==2.9.9
-sqlalchemy==2.0.23
+# This file lists all the Python packages needed to run the Medical LLM system.# FastAPI and web framework
 
-# AI and ML libraries
-sentence-transformers==2.2.2
-numpy==1.24.3
+# These dependencies were carefully selected to balance functionality and compatibility.fastapi==0.104.1
+
+#uvicorn[standard]==0.24.0
+
+# Installation: pip install -r requirements.txt
+
+# # Database and vector operations
+
+# Note: Make sure you're using Python 3.12.1 or higherpsycopg2-binary==2.9.9
+
+# Total download size: approximately 4-5 GB (includes ML models)sqlalchemy==2.0.23
+
+
+
+# ==========================================# AI and ML libraries
+
+# Web Framework & REST APIsentence-transformers==2.2.2
+
+# ==========================================numpy==1.24.3
+
 tensorflow==2.15.0
-keras-nlp==0.6.3
 
-# HTTP requests
+# FastAPI - Modern async web framework for building the medical APIkeras-nlp==0.6.3
+
+# We chose this for its speed, automatic documentation, and type safety
+
+fastapi==0.104.1# HTTP requests
+
 requests==2.31.0
 
-# Data processing
-pandas==2.1.4
+# Uvicorn - Lightning-fast ASGI server to run our FastAPI application
 
-# Logging and utilities
-python-multipart==0.0.6
-pydantic==2.5.0
+# The 'standard' extra includes performance optimizations# Data processing
 
-# Development and testing (optional)
-pytest==7.4.3
+uvicorn[standard]==0.24.0pandas==2.1.4
+
+
+
+# Pydantic - Data validation library that works seamlessly with FastAPI# Logging and utilities
+
+# Ensures all symptom inputs and outputs are properly validatedpython-multipart==0.0.6
+
+pydantic==2.5.0pydantic==2.5.0
+
+
+
+# Python-multipart - Handles form data and file uploads in HTTP requests# Development and testing (optional)
+
+python-multipart==0.0.6pytest==7.4.3
+
 pytest-asyncio==0.21.1
+
+# ==========================================
+# Database & Storage
+# ==========================================
+
+# psycopg2-binary - PostgreSQL database adapter for Python
+# We use this to store and retrieve our medical knowledge base
+psycopg2-binary==2.9.9
+
+# SQLAlchemy - Powerful SQL toolkit and Object-Relational Mapping (ORM)
+# Makes database operations cleaner and more Pythonic
+SQLAlchemy==2.0.23
+
+# ==========================================
+# Core Machine Learning & AI
+# ==========================================
+
+# PyTorch - Deep learning framework that powers our neural networks
+# CPU-only version for better compatibility across different systems
+torch==2.1.0
+
+# Transformers - Hugging Face library for state-of-the-art NLP models
+# We use this to run the PubMedBERT medical language model
+transformers==4.35.2
+
+# Sentence-Transformers - Creates semantic embeddings for medical text
+# Used for similarity search in our knowledge base
+sentence-transformers==2.2.2
+
+# Tokenizers - Fast implementation of tokenizers for NLP
+# Processes text before feeding it to our language models
+tokenizers==0.15.0
+
+# Hugging Face Hub - Downloads and manages ML models from Hugging Face
+huggingface-hub==0.19.4
+
+# NumPy - Fundamental package for numerical computing in Python
+# Required by almost all ML libraries for array operations
+numpy==1.24.3
+
+# ==========================================
+# Local LLM Integration
+# ==========================================
+
+# Ollama - Python client for interacting with local LLM models
+# We use this to communicate with the Phi language model
+ollama==0.1.6
+
+# Requests - Simple HTTP library for making API calls
+# Used for health checks and external API communication
+requests==2.31.0
+
+# ==========================================
+# Data Processing
+# ==========================================
+
+# Pandas - Data manipulation and analysis library
+# Helps us process and organize medical symptoms data
+pandas==2.1.3
+
+# Scikit-learn - Machine learning utilities and algorithms
+# Used for data preprocessing and evaluation metrics
+scikit-learn==1.3.2
+
+# ==========================================
+# Natural Language Processing Tools
+# ==========================================
+
+# NLTK - Natural Language Toolkit for text processing
+# We use this for tokenization and text preprocessing
+nltk==3.8.1
+
+# ==========================================
+# Configuration & Environment
+# ==========================================
+
+# python-dotenv - Reads environment variables from .env files
+# Makes it easy to manage database credentials and API keys
+python-dotenv==1.0.0
+
+# PyYAML - YAML file parser and emitter
+# Used for configuration file management
+PyYAML==6.0.1
+
+# ==========================================
+# Testing & Quality Assurance (Optional)
+# ==========================================
+
+# pytest - Modern testing framework for Python
+# Used to ensure our medical API works correctly
+pytest==7.4.3
+
+# pytest-asyncio - Extension for testing async FastAPI endpoints
+pytest-asyncio==0.21.1
+
+# httpx - Modern HTTP client with async support
+# Better than requests for testing async code
+httpx==0.25.1
+
+# ==========================================
+# Logging & Monitoring
+# ==========================================
+
+# python-json-logger - Formats logs as JSON for better parsing
+# Makes it easier to track what the system is doing
+python-json-logger==2.0.7
+
+# ==========================================
+# IMPORTANT NOTES
+# ==========================================
+#
+# External Dependencies (install separately):
+# - PostgreSQL 14.19+ : Database system (postgresql.org)
+# - Ollama : Local LLM runtime (ollama.ai)
+# - Node.js 18+ : For the React frontend (nodejs.org)
+#
+# First Time Setup:
+# 1. Create virtual environment: python -m venv venv
+# 2. Activate it: .\venv\Scripts\Activate.ps1 (Windows)
+# 3. Install packages: pip install -r requirements.txt
+# 4. Download Ollama model: ollama pull phi:latest
+#
+# GPU Support (Optional):
+# If you have an NVIDIA GPU and want faster processing, replace:
+#   torch==2.1.0
+# With:
+#   torch==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
+#
+# Common Issues:
+# - If sentence-transformers fails, try: pip install --upgrade pip setuptools wheel
+# - If psycopg2 fails, ensure PostgreSQL is installed first
+# - Models will auto-download on first run (~440MB for PubMedBERT)
+#
+# System Tested On:
+# - Windows 11 with Python 3.12.1
+# - Linux Ubuntu 22.04 with Python 3.12.1
+# - macOS Ventura with Python 3.12.1
+#
+# Last Updated: October 2025
+# Project: Medical Symptom Analyzer v1.0

@@ -27,9 +27,9 @@ app = FastAPI(
 try:
     from simple_knowledge_base import SimpleKnowledgeBase
     knowledge_base = SimpleKnowledgeBase(kb_folder="KB_")
-    logger.info(f"✅ Loaded {len(knowledge_base.documents)} medical documents")
+    logger.info(f"[SUCCESS] Loaded {len(knowledge_base.documents)} medical documents")
 except Exception as e:
-    logger.error(f"❌ Failed to load knowledge base: {e}")
+    logger.error(f"[ERROR] Failed to load knowledge base: {e}")
     knowledge_base = None
 
 class SymptomRequest(BaseModel):
@@ -156,13 +156,14 @@ async def analyze_symptoms(request: SymptomRequest):
             )
         
     except Exception as e:
-        logger.error(f"❌ Error analyzing symptoms: {e}")
+        logger.error(f"[ERROR] Error analyzing symptoms: {e}")
         raise HTTPException(status_code=500, detail=f"Analysis error: {str(e)}")
 
 if __name__ == "__main__":
-    logger.info("🚀 Starting Simple Medical Symptom Analysis API...")
-    logger.info("📚 Using file-based knowledge base (no PostgreSQL required)")
-    logger.info("🌐 Server will be available at: http://127.0.0.1:9000")
-    logger.info("📖 API documentation at: http://127.0.0.1:9000/docs")
+    logger.info("[INIT] Starting Simple Medical Symptom Analysis API...")
+    logger.info("[INFO] Using file-based knowledge base (no PostgreSQL required)")
+    logger.info("[INFO] Server will be available at: http://127.0.0.1:9000")
+    logger.info("[INFO] API documentation at: http://127.0.0.1:9000/docs")
     
     uvicorn.run(app, host="127.0.0.1", port=9000, log_level="info")
+

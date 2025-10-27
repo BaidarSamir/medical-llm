@@ -24,53 +24,34 @@ class PromptBuilder:
     """Dynamic prompt builder for medical symptom analysis"""
     
     def __init__(self):
-        self.system_prompt_template = """You are a helpful medical assistant. Your role is to:
-1. Analyze the patient's symptoms based on the provided medical information
-2. Explain the potential causes and implications in simple, understandable terms
-3. Provide clear, actionable recommendations
-4. Always emphasize when immediate medical attention is needed
-5. Be empathetic and professional in your response
-
-IMPORTANT: This is for informational purposes only and should not replace professional medical advice."""
+        self.system_prompt_template = """You are a medical advisor providing symptom analysis. 
+Analyze symptoms, explain causes clearly, give actionable recommendations, and emphasize when immediate care is needed.
+Be empathetic and professional. This is for informational purposes only."""
 
     def build_medical_prompt(self, context: PromptContext) -> str:
         """Build a comprehensive medical analysis prompt"""
         
         doc = context.retrieved_document
         
-        # Build the main prompt
+        # Build the main prompt with clearer structure for phi model
         prompt = f"""{self.system_prompt_template}
 
-PATIENT SYMPTOMS:
-{context.user_input}
+PATIENT REPORT: {context.user_input}
 
-MEDICAL ANALYSIS CONTEXT:
-Department: {context.predicted_department} (confidence: {context.classification_confidence:.1%})
-Symptom Match: {doc['symptom']}
-Urgency Level: {context.severity_analysis['urgency_level']}
-Severity Assessment: {context.severity_analysis['severity']}
+MEDICAL CONTEXT:
+- Department: {context.predicted_department}
+- Matched Symptom: {doc['symptom']}
+- Related Terms: {', '.join(doc.get('aliases', [])[:5])}
+- Potential Causes: {', '.join(doc.get('causes', []))}
+- Possible Consequences: {', '.join(doc.get('consequences', []))}
+- Recommendations: {', '.join(doc.get('suggestions', []))}
+- Urgency: {context.severity_analysis['urgency_level']}
 
-RELEVANT MEDICAL INFORMATION:
-Symptoms: {', '.join(doc.get('aliases', []))}
-Potential Causes: {', '.join(doc.get('causes', []))}
-Possible Consequences: {', '.join(doc.get('consequences', []))}
-Medical Recommendations: {', '.join(doc.get('suggestions', []))}
+INSTRUCTIONS:
+Write a clear medical response explaining the symptoms, possible causes, and what the patient should do. 
+Be specific and actionable. Start your response immediately.
 
-TASK:
-Based on the above information, provide a comprehensive, natural, and empathetic analysis that includes:
-
-1. A clear, conversational explanation of what might be happening with the patient's symptoms
-2. The potential seriousness of the situation in simple terms
-3. Specific, actionable recommendations for the patient
-4. When to seek immediate medical attention
-5. What the patient can expect
-
-IMPORTANT: Write in a natural, conversational tone as if you're speaking directly to the patient. Be empathetic, clear, and informative. Avoid generic warnings - provide specific, helpful information based on the medical context provided.
-
-Example format:
-"It sounds like you're experiencing [symptoms]. These could be signs that [explanation]. This can happen due to things like [causes]. It's important to [why it matters]. I recommend [specific actions]. Also, try to [additional advice]."
-
-Please respond in a friendly, empathetic tone while being medically accurate and clear about urgency levels."""
+RESPONSE:"""
 
         return prompt
     

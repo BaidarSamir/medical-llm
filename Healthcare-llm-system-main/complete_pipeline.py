@@ -51,41 +51,41 @@ class CompleteSymptomPipeline:
         self.model_assets = model_assets
         self.llm_backend = llm_backend
         
-        logger.info("🚀 Initializing Complete Symptom Analysis Pipeline...")
+        logger.info("[INIT] Initializing Complete Symptom Analysis Pipeline...")
         
         # Initialize knowledge base
-        logger.info("📚 Initializing knowledge base...")
+        logger.info("[INIT] Initializing knowledge base...")
         self.knowledge_base = self._initialize_knowledge_base()
         
         # Initialize RAG retriever
-        logger.info("🔍 Initializing RAG retriever...")
+        logger.info("[INIT] Initializing RAG retriever...")
         self.rag_retriever = create_rag_retriever(model_assets, self.knowledge_base)
         
         # Initialize prompt builder
-        logger.info("📝 Initializing prompt builder...")
+        logger.info("[INIT] Initializing prompt builder...")
         self.prompt_builder = create_prompt_builder()
         
         # Initialize local LLM
-        logger.info("🤖 Initializing local LLM...")
+        logger.info("[INIT] Initializing local LLM...")
         self.local_llm = create_local_llm(llm_backend)
         
-        logger.info("✅ Complete pipeline initialized successfully")
+        logger.info("[SUCCESS] Complete pipeline initialized successfully")
     
     def _initialize_knowledge_base(self) -> PostgreSQLKnowledgeBase:
         """Initialize the PostgreSQL knowledge base"""
         try:
             # Use PostgreSQL with pgvector
-            db_url = "postgresql://postgres@localhost:5432/symptom_kb"
+            db_url = "postgresql://postgres:12345678@localhost:5432/symptom_kb"
             kb = create_postgres_knowledge_base(db_url=db_url)
             
             # Initialize the knowledge base if not already done
             if not kb.initialize_knowledge_base():
-                logger.warning("⚠️ Knowledge base initialization failed, but continuing...")
+                logger.warning("[WARNING] Knowledge base initialization failed, but continuing...")
             
-            logger.info("✅ PostgreSQL knowledge base initialized")
+            logger.info("[SUCCESS] PostgreSQL knowledge base initialized")
             return kb
         except Exception as e:
-            logger.error(f"❌ Failed to initialize knowledge base: {e}")
+            logger.error(f"[ERROR] Failed to initialize knowledge base: {e}")
             raise
     
     def analyze_symptoms(self, symptom_text: str) -> PipelineResult:
@@ -102,7 +102,7 @@ class CompleteSymptomPipeline:
         start_time = time.time()
         
         try:
-            logger.info(f"🔍 Analyzing symptoms: {symptom_text[:50]}...")
+            logger.info(f"[ANALYZE] Analyzing symptoms: {symptom_text[:50]}...")
             
             # Step 1: Retrieve relevant documents using RAG
             logger.info("Step 1: Retrieving relevant documents...")
@@ -112,7 +112,7 @@ class CompleteSymptomPipeline:
                 raise ValueError("No relevant documents found in knowledge base")
             
             best_match = retrieved_results[0]
-            logger.info(f"✅ Retrieved document: {best_match['symptom']} ({best_match['department']})")
+            logger.info(f"[SUCCESS] Retrieved document: {best_match['symptom']} ({best_match['department']})")
             
             # Step 2: Build prompt for LLM
             logger.info("Step 2: Building prompt...")
@@ -129,7 +129,7 @@ class CompleteSymptomPipeline:
             )
             
             prompt = self.prompt_builder.build_prompt(prompt_context)
-            logger.info(f"✅ Built prompt ({len(prompt)} characters)")
+            logger.info(f"[SUCCESS] Built prompt ({len(prompt)} characters)")
             
             # Step 3: Generate LLM response
             logger.info("Step 3: Generating LLM response...")
@@ -139,7 +139,7 @@ class CompleteSymptomPipeline:
                 raise RuntimeError(f"LLM generation failed: {llm_result.get('error', 'Unknown error')}")
             
             llm_response = llm_result['response']
-            logger.info(f"✅ Generated LLM response ({len(llm_response)} characters)")
+            logger.info(f"[SUCCESS] Generated LLM response ({len(llm_response)} characters)")
             
             # Step 4: Calculate processing time
             processing_time = time.time() - start_time
@@ -156,12 +156,12 @@ class CompleteSymptomPipeline:
                 success=True
             )
             
-            logger.info(f"✅ Pipeline completed successfully in {processing_time:.2f}s")
+            logger.info(f"[SUCCESS] Pipeline completed successfully in {processing_time:.2f}s")
             return result
             
         except Exception as e:
             processing_time = time.time() - start_time
-            logger.error(f"❌ Pipeline failed: {e}")
+            logger.error(f"[ERROR] Pipeline failed: {e}")
             
             return PipelineResult(
                 request_id=request_id,
@@ -216,7 +216,7 @@ def create_complete_pipeline(model_assets: Dict[str, Any], llm_backend: str = "m
 
 def test_pipeline():
     """Test the complete pipeline"""
-    logger.info("🧪 Testing Complete Symptom Pipeline...")
+    logger.info("[TEST] Testing Complete Symptom Pipeline...")
     
     # Mock model assets for testing
     mock_model_assets = {
@@ -237,28 +237,28 @@ def test_pipeline():
         ]
         
         for symptoms in test_symptoms:
-            logger.info(f"\n🔍 Testing: {symptoms}")
+            logger.info(f"\n[TEST] Testing: {symptoms}")
             result = pipeline.analyze_symptoms(symptoms)
             
             if result.success:
-                logger.info(f"✅ Success! Department: {result.predicted_department}")
-                logger.info(f"📝 LLM Response: {result.llm_response[:100]}...")
+                logger.info(f"[SUCCESS] Success! Department: {result.predicted_department}")
+                logger.info(f"[INFO] LLM Response: {result.llm_response[:100]}...")
             else:
-                logger.error(f"❌ Failed: {result.error_message}")
+                logger.error(f"[ERROR] Failed: {result.error_message}")
         
         # Test system health
         health = pipeline.get_system_health()
-        logger.info(f"🏥 System Health: {health['pipeline_status']}")
+        logger.info(f"[HEALTH] System Health: {health['pipeline_status']}")
         
         return True
         
     except Exception as e:
-        logger.error(f"❌ Pipeline test failed: {e}")
+        logger.error(f"[ERROR] Pipeline test failed: {e}")
         return False
 
 if __name__ == "__main__":
     success = test_pipeline()
     if success:
-        logger.info("🎉 Pipeline test completed successfully!")
+        logger.info("[SUCCESS] Pipeline test completed successfully!")
     else:
-        logger.error("❌ Pipeline test failed!") 
+        logger.error("[ERROR] Pipeline test failed!") 

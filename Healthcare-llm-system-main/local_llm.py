@@ -146,7 +146,7 @@ class TextGenerationWebUIBackend(LLMBackend):
 class OllamaBackend(LLMBackend):
     """Ollama backend for local LLM integration"""
     
-    def __init__(self, model_name: str = "mistral:7b-instruct", api_url: str = "http://localhost:11434"):
+    def __init__(self, model_name: str = "phi:latest", api_url: str = "http://localhost:11434"):
         self.model_name = model_name
         self.api_url = api_url
         self._test_connection()
@@ -192,26 +192,27 @@ class OllamaBackend(LLMBackend):
                     "temperature": temperature,
                     "top_k": 40,  # Higher quality sampling
                     "top_p": 0.9,  # Higher quality sampling
-                    "repeat_penalty": 1.05,  # Light penalty for quality
+                    "repeat_penalty": 1.1,  # Prevent repetition
                     "num_ctx": 4096,  # Larger context for better understanding
                     "num_thread": 8,  # More threads for CPU processing
                     "num_gpu": 0,  # Force CPU usage since GPU not available
-                    "seed": 42,  # Fixed seed for consistency
-                    "tfs_z": 0.8,  # Tail free sampling for speed
-                    "typical_p": 0.8  # Typical sampling for speed
-                },
-                "stop": ["\n\n\n", "###", "END", "STOP", "Human:", "Assistant:", "Patient:", "Doctor:"]
+                }
+                # Removed aggressive stop sequences that were cutting off phi's response
             }
             
             response = requests.post(
                 f"{self.api_url}/api/generate",
                 json=payload,
-                timeout=120  # Generous timeout for accuracy over speed
+                timeout=300  # 5 minute timeout for CPU-based LLM processing
             )
             
             if response.status_code == 200:
                 result = response.json()
-                return result.get("response", "").strip()
+                llm_response = result.get("response", "").strip()
+                logger.info(f"🤖 Raw LLM response length: {len(llm_response)} chars")
+                if len(llm_response) == 0:
+                    logger.warning(f"⚠️ Empty response from LLM. Full result: {result}")
+                return llm_response
             else:
                 logger.error(f"Ollama API error: {response.status_code} - {response.text}")
                 raise RuntimeError(f"Ollama API error: {response.status_code}")

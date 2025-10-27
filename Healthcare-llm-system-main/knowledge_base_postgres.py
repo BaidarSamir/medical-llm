@@ -32,7 +32,7 @@ class PostgreSQLKnowledgeBase:
     """Knowledge base implementation using PostgreSQL with pgvector extension."""
     
     def __init__(self, 
-                 db_url: str = "postgresql://postgres@localhost:5432/symptom_kb",
+                 db_url: str = "postgresql://postgres:12345678@localhost:5432/symptom_kb",
                  model_name: str = "all-MiniLM-L6-v2",
                  kb_folder: str = "KB_"):
         """
@@ -49,10 +49,10 @@ class PostgreSQLKnowledgeBase:
         try:
             # Use a simple model that should work without authentication
             self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-            logger.info("✅ SentenceTransformer model loaded successfully")
+            logger.info("[SUCCESS] SentenceTransformer model loaded successfully")
         except Exception as e:
-            logger.warning(f"⚠️ sentence-transformers failed: {e}")
-            logger.info("💡 Using fallback embedding method")
+            logger.warning(f"[WARNING] sentence-transformers failed: {e}")
+            logger.info("[INFO] Using fallback embedding method")
             self.embedding_model = None
         self.engine = None
         self.documents: List[SymptomDocument] = []
@@ -64,22 +64,31 @@ class PostgreSQLKnowledgeBase:
             # Test connection
             with self.engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
-            logger.info("✅ Successfully connected to PostgreSQL database")
+            logger.info("[SUCCESS] Successfully connected to PostgreSQL database")
             return True
         except Exception as e:
-            logger.error(f"❌ Failed to connect to database: {e}")
+            logger.error(f"[ERROR] Failed to connect to database: {e}")
             return False
     
     def create_tables(self) -> bool:
         """Create necessary tables for storing symptom documents and embeddings."""
         try:
             with self.engine.connect() as conn:
-                # Create pgvector extension if not exists
-                conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-                conn.commit()
+                # Try to create pgvector extension (optional - will skip if not available)
+                use_vector = False
+                try:
+                    conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+                    conn.commit()
+                    logger.info("[SUCCESS] pgvector extension enabled")
+                    use_vector = True
+                except Exception as e:
+                    logger.warning(f"[WARNING] pgvector not available, using TEXT for embeddings: {e}")
+                    # Rollback the failed transaction so we can continue
+                    conn.rollback()
                 
-                # Create symptoms table
-                conn.execute(text("""
+                # Create symptoms table (with TEXT embedding if pgvector unavailable)
+                embedding_type = "vector(384)" if use_vector else "TEXT"
+                conn.execute(text(f"""
                     CREATE TABLE IF NOT EXISTS symptoms (
                         id SERIAL PRIMARY KEY,
                         symptom_name VARCHAR(255) NOT NULL,
@@ -90,24 +99,28 @@ class PostgreSQLKnowledgeBase:
                         consequences TEXT[],
                         suggestions TEXT[],
                         content TEXT,
-                        embedding vector(384),
+                        embedding {embedding_type},
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 """))
                 conn.commit()
                 
-                # Create index for vector similarity search
-                conn.execute(text("""
-                    CREATE INDEX IF NOT EXISTS symptoms_embedding_idx 
-                    ON symptoms USING ivfflat (embedding vector_cosine_ops)
-                    WITH (lists = 100)
-                """))
-                conn.commit()
+                # Create index for vector similarity search (only if pgvector available)
+                if use_vector:
+                    try:
+                        conn.execute(text("""
+                            CREATE INDEX IF NOT EXISTS symptoms_embedding_idx 
+                            ON symptoms USING ivfflat (embedding vector_cosine_ops)
+                            WITH (lists = 100)
+                        """))
+                        conn.commit()
+                    except Exception as e:
+                        logger.warning(f"[WARNING] Could not create vector index: {e}")
                 
-            logger.info("✅ Database tables created successfully")
+            logger.info("[SUCCESS] Database tables created successfully")
             return True
         except Exception as e:
-            logger.error(f"❌ Failed to create tables: {e}")
+            logger.error(f"[ERROR] Failed to create tables: {e}")
             return False
     
     def load_documents_from_folder(self) -> List[SymptomDocument]:
@@ -116,11 +129,11 @@ class PostgreSQLKnowledgeBase:
         kb_path = Path(self.kb_folder)
         
         if not kb_path.exists():
-            logger.error(f"❌ KB folder '{self.kb_folder}' not found")
+            logger.error(f"[ERROR] KB folder '{self.kb_folder}' not found")
             return documents
         
         json_files = list(kb_path.glob("*.json"))
-        logger.info(f"📁 Found {len(json_files)} JSON files in {self.kb_folder}")
+        logger.info(f"[FOLDER] Found {len(json_files)} JSON files in {self.kb_folder}")
         
         for json_file in json_files:
             try:
@@ -150,23 +163,23 @@ class PostgreSQLKnowledgeBase:
                     content=content
                 )
                 documents.append(document)
-                logger.info(f"📄 Loaded: {document.symptom} ({document.department})")
+                logger.info(f"[FILE] Loaded: {document.symptom} ({document.department})")
                 
             except Exception as e:
-                logger.error(f"❌ Failed to load {json_file}: {e}")
+                logger.error(f"[ERROR] Failed to load {json_file}: {e}")
         
         self.documents = documents
-        logger.info(f"✅ Loaded {len(documents)} documents from {self.kb_folder}")
+        logger.info(f"[SUCCESS] Loaded {len(documents)} documents from {self.kb_folder}")
         return documents
     
     def create_embeddings(self) -> bool:
         """Create embeddings for all loaded documents."""
         if not self.documents:
-            logger.warning("⚠️ No documents loaded. Call load_documents_from_folder() first.")
+            logger.warning("[WARNING] No documents loaded. Call load_documents_from_folder() first.")
             return False
         
         if self.embedding_model is None:
-            logger.warning("⚠️ No embedding model available, creating simple hash-based embeddings")
+            logger.warning("[WARNING] No embedding model available, creating simple hash-based embeddings")
             # Create simple hash-based embeddings as fallback
             import hashlib
             for doc in self.documents:
@@ -183,7 +196,7 @@ class PostgreSQLKnowledgeBase:
                     embedding = embedding[:384]
                 doc.embedding = embedding
             
-            logger.info(f"✅ Created hash-based embeddings for {len(self.documents)} documents")
+            logger.info(f"[SUCCESS] Created hash-based embeddings for {len(self.documents)} documents")
             return True
         
         try:
@@ -195,31 +208,36 @@ class PostgreSQLKnowledgeBase:
             for doc, embedding in zip(self.documents, embeddings):
                 doc.embedding = embedding
             
-            logger.info(f"✅ Created embeddings for {len(self.documents)} documents")
+            logger.info(f"[SUCCESS] Created embeddings for {len(self.documents)} documents")
             return True
         except Exception as e:
-            logger.error(f"❌ Failed to create embeddings: {e}")
+            logger.error(f"[ERROR] Failed to create embeddings: {e}")
             return False
     
     def save_to_database(self) -> bool:
         """Save all documents with embeddings to PostgreSQL database."""
         if not self.documents:
-            logger.warning("⚠️ No documents to save. Load documents first.")
+            logger.warning("[WARNING] No documents to save. Load documents first.")
             return False
         
-        logger.info(f"📝 Attempting to save {len(self.documents)} documents to database...")
+        logger.info(f"[INFO] Attempting to save {len(self.documents)} documents to database...")
         
         try:
-            # Use psycopg2 directly for the entire operation
+            # Use psycopg2 directly with password from db_url
+            # Extract password from self.db_url (format: postgresql://user:password@host:port/db)
+            from urllib.parse import urlparse
+            parsed = urlparse(self.db_url)
+            
             conn = psycopg2.connect(
-                host="localhost",
-                database="symptom_kb",
-                user="postgres"
+                host=parsed.hostname or "localhost",
+                database=parsed.path.lstrip('/'),
+                user=parsed.username or "postgres",
+                password=parsed.password or ""
             )
             cursor = conn.cursor()
             
             # Clear existing data
-            logger.info("🗑️ Clearing existing data...")
+            logger.info("[CLEAR] Clearing existing data...")
             cursor.execute("DELETE FROM symptoms")
             conn.commit()
             
@@ -227,17 +245,17 @@ class PostgreSQLKnowledgeBase:
             saved_count = 0
             for i, doc in enumerate(self.documents):
                 if doc.embedding is not None:
-                    # Convert embedding to proper vector format
+                    # Convert embedding to string format (for TEXT column)
                     embedding_list = doc.embedding.tolist()
                     embedding_str = '[' + ','.join(map(str, embedding_list)) + ']'
                     
-                    logger.info(f"💾 Saving document {i+1}/{len(self.documents)}: {doc.symptom}")
+                    logger.info(f"[SAVE] Saving document {i+1}/{len(self.documents)}: {doc.symptom}")
                     
                     cursor.execute("""
                         INSERT INTO symptoms 
                         (symptom_name, aliases, department, reason, causes, 
                          consequences, suggestions, content, embedding)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::vector)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """, (
                         doc.symptom,
                         doc.aliases,
@@ -251,22 +269,22 @@ class PostgreSQLKnowledgeBase:
                     ))
                     saved_count += 1
                 else:
-                    logger.warning(f"⚠️ Document {i+1} has no embedding: {doc.symptom}")
+                    logger.warning(f"[WARNING] Document {i+1} has no embedding: {doc.symptom}")
             
             conn.commit()
             cursor.close()
             conn.close()
             
-            logger.info(f"✅ Successfully saved {saved_count} documents to database")
+            logger.info(f"[SUCCESS] Successfully saved {saved_count} documents to database")
             return True
                 
         except Exception as e:
-            logger.error(f"❌ Failed to save to database: {e}")
+            logger.error(f"[ERROR] Failed to save to database: {e}")
             return False
     
     def search(self, query: str, top_k: int = 3, department_filter: Optional[str] = None) -> List[Dict[str, Any]]:
         """
-        Search for similar documents using vector similarity.
+        Search for similar documents using keyword matching (fallback for no pgvector).
         
         Args:
             query: Search query
@@ -277,31 +295,24 @@ class PostgreSQLKnowledgeBase:
             List of similar documents with scores
         """
         try:
-            # Create query embedding
-            if self.embedding_model is None:
-                # Use simple hash-based embedding for query
-                import hashlib
-                query_hash = hashlib.md5(query.encode()).hexdigest()
-                query_embedding = np.array([ord(c) % 10 for c in query_hash[:96]] * 4, dtype=np.float32)
-                # Ensure it's exactly 384 dimensions
-                if len(query_embedding) < 384:
-                    query_embedding = np.pad(query_embedding, (0, 384 - len(query_embedding)), 'constant')
-                elif len(query_embedding) > 384:
-                    query_embedding = query_embedding[:384]
-            else:
-                query_embedding = self.embedding_model.encode([query])[0]
+            # Extract keywords from query (simple word-based approach)
+            keywords = [word.lower() for word in query.split() if len(word) > 3]
             
+            if not keywords:
+                logger.warning("[WARNING] No keywords extracted from query")
+                # Return all documents if no keywords
+                keywords = ['pain', 'chest']  # Default fallback
+            
+            # Use keyword-based search since we don't have pgvector
             with self.engine.connect() as conn:
-                # Build search query
-                # Convert query embedding to proper vector format
-                query_embedding_list = query_embedding.tolist()
-                query_embedding_str = '[' + ','.join(map(str, query_embedding_list)) + ']'
-                
-                # Use psycopg2 directly for vector operations
+                # Use psycopg2 directly for text search
                 cursor = conn.connection.cursor()
                 
-                # Build search query with proper vector casting
-                search_sql = """
+                # Build OR conditions for each keyword
+                keyword_conditions = " OR ".join(["LOWER(content) LIKE %s" for _ in keywords])
+                
+                # Keyword-based search using LIKE with OR
+                search_sql = f"""
                     SELECT 
                         symptom_name,
                         aliases,
@@ -311,17 +322,20 @@ class PostgreSQLKnowledgeBase:
                         consequences,
                         suggestions,
                         content,
-                        1 - (embedding <=> %s::vector) as similarity_score
+                        0.8 as similarity_score
                     FROM symptoms
+                    WHERE {keyword_conditions}
                 """
-                params = [query_embedding_str]
+                
+                # Create search patterns for each keyword
+                params = [f"%{keyword}%" for keyword in keywords]
                 
                 # Add department filter if specified
                 if department_filter:
-                    search_sql += " WHERE department = %s"
+                    search_sql += " AND department = %s"
                     params.append(department_filter)
                 
-                search_sql += " ORDER BY similarity_score DESC LIMIT %s"
+                search_sql += " LIMIT %s"
                 params.append(top_k)
                 
                 cursor.execute(search_sql, params)
@@ -344,11 +358,11 @@ class PostgreSQLKnowledgeBase:
                 
                 cursor.close()
                 
-                logger.info(f"🔍 Found {len(results)} similar documents for query: '{query}'")
+                logger.info(f"[SEARCH] Found {len(results)} similar documents for query: '{query}'")
                 return results
                 
         except Exception as e:
-            logger.error(f"❌ Search failed: {e}")
+            logger.error(f"[ERROR] Search failed: {e}")
             return []
     
     def get_department_stats(self) -> Dict[str, int]:
@@ -364,12 +378,12 @@ class PostgreSQLKnowledgeBase:
                 stats = {row.department: row.count for row in result.fetchall()}
                 return stats
         except Exception as e:
-            logger.error(f"❌ Failed to get department stats: {e}")
+            logger.error(f"[ERROR] Failed to get department stats: {e}")
             return {}
     
     def initialize_knowledge_base(self) -> bool:
         """Complete initialization: load documents, create embeddings, save to DB."""
-        logger.info("🚀 Initializing PostgreSQL knowledge base...")
+        logger.info("[INIT] Initializing PostgreSQL knowledge base...")
         
         # Step 1: Connect to database
         if not self.connect_database():
@@ -380,7 +394,9 @@ class PostgreSQLKnowledgeBase:
             return False
         
         # Step 3: Load documents
-        if not self.load_documents_from_folder():
+        documents = self.load_documents_from_folder()
+        if not documents:
+            logger.warning("[WARNING] No documents loaded from KB_ folder")
             return False
         
         # Step 4: Create embeddings
@@ -393,14 +409,14 @@ class PostgreSQLKnowledgeBase:
         
         # Step 6: Show statistics
         stats = self.get_department_stats()
-        logger.info("📊 Knowledge base statistics:")
+        logger.info("[STATS] Knowledge base statistics:")
         for dept, count in stats.items():
             logger.info(f"   {dept}: {count} documents")
         
-        logger.info("✅ Knowledge base initialization completed successfully!")
+        logger.info("[SUCCESS] Knowledge base initialization completed successfully!")
         return True
 
-def create_postgres_knowledge_base(db_url: str = "postgresql://postgres@localhost:5432/symptom_kb") -> PostgreSQLKnowledgeBase:
+def create_postgres_knowledge_base(db_url: str = "postgresql://postgres:12345678@localhost:5432/symptom_kb") -> PostgreSQLKnowledgeBase:
     """Factory function to create and initialize a PostgreSQL knowledge base."""
     kb = PostgreSQLKnowledgeBase(db_url=db_url)
     return kb
@@ -408,7 +424,7 @@ def create_postgres_knowledge_base(db_url: str = "postgresql://postgres@localhos
 # Test function
 def test_postgres_kb():
     """Test the PostgreSQL knowledge base implementation."""
-    logger.info("🧪 Testing PostgreSQL knowledge base...")
+    logger.info("[TEST] Testing PostgreSQL knowledge base...")
     
     # Create knowledge base
     kb = PostgreSQLKnowledgeBase()
@@ -423,13 +439,13 @@ def test_postgres_kb():
         ]
         
         for query in test_queries:
-            logger.info(f"\n🔍 Testing query: '{query}'")
+            logger.info(f"\n[SEARCH] Testing query: '{query}'")
             results = kb.search(query, top_k=2)
             for i, result in enumerate(results, 1):
                 logger.info(f"  {i}. {result['symptom']} ({result['department']}) - Score: {result['similarity_score']:.3f}")
     
     else:
-        logger.error("❌ Knowledge base initialization failed")
+        logger.error("[ERROR] Knowledge base initialization failed")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

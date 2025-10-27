@@ -1,0 +1,74 @@
+# Root .gitignore for medical-llm
+# Covers Python backend, Node frontend (webui), and project artifacts
+
+# --------------------
+# Python
+# --------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Packaging / build
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Testing / coverage
+.pytest_cache/
+.coverage*
+htmlcov/
+
+# Type checkers / tools
+.mypy_cache/
+.pyre/
+.dmypy.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs / temp
+*.log
+*.tmp
+*.temp
+
+# Editors / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# --------------------
+# Project-specific (backend folder)
+# --------------------
+Healthcare-llm-system-main/venv/
+Healthcare-llm-system-main/.env
+Healthcare-llm-system-main/*.env
+Healthcare-llm-system-main/model_cache/
+Healthcare-llm-system-main/saved_models/
+Healthcare-llm-system-main/data/
+Healthcare-llm-system-main/processed_symptoms/
+Healthcare-llm-system-main/__results___files/
+Healthcare-llm-system-main/debug_*.py
+Healthcare-llm-system-main/quick_test.py
+Healthcare-llm-system-main/test_*.py
+Healthcare-llm-system-main/setup_*.py
+
+# --------------------
+# Frontend (React + Vite) under backend folder
+# --------------------
+Healthcare-llm-system-main/webui/node_modules/
+Healthcare-llm-system-main/webui/dist/
+Healthcare-llm-system-main/webui/.vite/
+Healthcare-llm-system-main/webui/.cache/
